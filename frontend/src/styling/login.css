@@ -9,6 +9,7 @@
 
 .login-container {
   display: flex;
+  flex-direction: row;
   border: 5px solid #000;
   max-width: 1000px;
   width: 100%;
@@ -16,7 +17,8 @@
   background-color: #baa69d;
 }
 
-.login-left-side, .login-right-side {
+.login-left-side,
+.login-right-side {
   flex: 1;
 }
 
@@ -81,4 +83,23 @@
 @font-face {
   font-family: BebasNeue;
   src: url(../BebasNeue-Regular.ttf);
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left-side,
+  .login-right-side {
+    width: 100%;
+  }
+
+  .login-left-side {
+    padding: 0;
+  }
+
+  .login-right-side {
+    padding: 20px;
+  }
 }
