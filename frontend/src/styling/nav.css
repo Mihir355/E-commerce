@@ -1,8 +1,3 @@
-@font-face {
-  font-family: BebasNeue;
-  src: url(../BebasNeue-Regular.ttf);
-}
-
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -12,14 +7,13 @@
   color: #231F20;
   border-radius: 5px;
   margin: 10px;
-  flex-wrap: wrap;
-  font-family: BebasNeue;
 }
 
 .logo img {
-  height: 40px;
+  height: 50px;
   border-radius: 5px;
 }
+
 
 .options {
   display: flex;
@@ -28,9 +22,10 @@
 }
 
 .options span {
-  margin: 0 15px;
+  margin: 0 20px;
   cursor: pointer;
-  font-size: large;
+  font-size: xx-large;
+  font-family: BebasNeue;
   color: #231F20;
 }
 
@@ -40,29 +35,17 @@
 }
 
 .icons svg {
-  margin: 0 8px;
+  margin: 0 10px;
   cursor: pointer;
-  font-size: 1.5em;
+  font-size: 1.75em;
   color: #231F20;
 }
 
-@media (max-width: 580px) {
-  .options span {
-    font-size: medium;
-    margin: 0 8px;
-  }
+.logout-icon {
+  color: #e74c3c;
+}
 
-  .icons svg {
-    font-size: 1.3em;
-    margin: 0 5px;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .icons {
-    margin-top: 10px;
-  }
+@font-face {
+  font-family: BebasNeue;
+  src: url(../BebasNeue-Regular.ttf);
 }
