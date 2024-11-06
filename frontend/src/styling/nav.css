@@ -14,6 +14,7 @@
   border-radius: 5px;
 }
 
+
 .options {
   display: flex;
   justify-content: space-around;
@@ -47,22 +48,4 @@
 @font-face {
   font-family: BebasNeue;
   src: url(../BebasNeue-Regular.ttf);
-}
-
-@media screen and (max-width: 580px) {
-  .options {
-    display: none;
-  }
-
-  .icons {
-    display: none;
-  }
-
-  .dropdown-icon {
-    display: block;
-  }
-
-  .dropdown-menu {
-    display: block;
-  }
 }

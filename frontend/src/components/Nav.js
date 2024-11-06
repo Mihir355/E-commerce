@@ -56,12 +56,6 @@ const Nav = () => {
         <span onClick={() => navigate("/category/kids")}>Kids</span>
       </div>
       <div className="icons">
-        <FaUser onClick={handleProfileClick} />
-        <FaHeart onClick={handleWishlistClick} />
-        <FaShoppingBag onClick={handleCartClick} />
-        <FaSignOutAlt onClick={handleLogout} />
-      </div>
-      <div className="icons">
         <FaBars
           className="dropdown-icon"
           onClick={toggleDropdown}
