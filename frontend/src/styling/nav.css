@@ -56,16 +56,6 @@
   color: #231F20;
 }
 
-@media (min-width: 580px) {
-  .dropdown-icon {
-    display: none;
-  }
-  .icons svg {
-    margin: 0 10px;
-    font-size: 1.75em;
-  }
-}
-
 @media (max-width: 580px) {
   .icons svg:not(.dropdown-icon) {
     display: none;

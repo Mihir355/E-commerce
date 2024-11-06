@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styling/nav.css";
 import {
@@ -12,6 +12,15 @@ import {
 const Nav = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 580);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 580);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogoClick = () => {
     navigate("/homepage");
@@ -56,13 +65,36 @@ const Nav = () => {
         <span onClick={() => navigate("/category/kids")}>Kids</span>
       </div>
       <div className="icons">
-        <FaBars
-          className="dropdown-icon"
-          onClick={toggleDropdown}
-          style={{ cursor: "pointer" }}
-        />
-        {dropdownOpen && (
-          <div className="dropdown-menu">
+        {isMobile ? (
+          <>
+            <FaBars
+              className="dropdown-icon"
+              onClick={toggleDropdown}
+              style={{ cursor: "pointer" }}
+            />
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                <FaUser
+                  onClick={handleProfileClick}
+                  style={{ cursor: "pointer" }}
+                />
+                <FaHeart
+                  onClick={handleWishlistClick}
+                  style={{ cursor: "pointer" }}
+                />
+                <FaShoppingBag
+                  onClick={handleCartClick}
+                  style={{ cursor: "pointer" }}
+                />
+                <FaSignOutAlt
+                  onClick={handleLogout}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <>
             <FaUser
               onClick={handleProfileClick}
               style={{ cursor: "pointer" }}
@@ -79,7 +111,7 @@ const Nav = () => {
               onClick={handleLogout}
               style={{ cursor: "pointer" }}
             />
-          </div>
+          </>
         )}
       </div>
     </nav>
