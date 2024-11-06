@@ -4,7 +4,7 @@ import axios from "axios";
 import "../styling/footwear.css";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://e-commerce-dh0b.onrender.com",
 });
 
 const Footwear = () => {

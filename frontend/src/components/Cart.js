@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styling/cart.css";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://e-commerce-dh0b.onrender.com",
 });
 
 const Cart = () => {
