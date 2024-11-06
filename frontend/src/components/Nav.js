@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styling/nav.css";
-import { FaUser, FaHeart, FaShoppingBag, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaHeart,
+  FaShoppingBag,
+  FaSignOutAlt,
+  FaBars,
+} from "react-icons/fa";
 
 const Nav = () => {
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogoClick = () => {
     navigate("/homepage");
@@ -27,6 +34,10 @@ const Nav = () => {
     navigate("/");
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
   return (
     <nav className="navbar">
       <div
@@ -45,13 +56,31 @@ const Nav = () => {
         <span onClick={() => navigate("/category/kids")}>Kids</span>
       </div>
       <div className="icons">
-        <FaUser onClick={handleProfileClick} style={{ cursor: "pointer" }} />
-        <FaHeart onClick={handleWishlistClick} style={{ cursor: "pointer" }} />
-        <FaShoppingBag
-          onClick={handleCartClick}
+        <FaBars
+          className="dropdown-icon"
+          onClick={toggleDropdown}
           style={{ cursor: "pointer" }}
         />
-        <FaSignOutAlt onClick={handleLogout} style={{ cursor: "pointer" }} />
+        {dropdownOpen && (
+          <div className="dropdown-menu">
+            <FaUser
+              onClick={handleProfileClick}
+              style={{ cursor: "pointer" }}
+            />
+            <FaHeart
+              onClick={handleWishlistClick}
+              style={{ cursor: "pointer" }}
+            />
+            <FaShoppingBag
+              onClick={handleCartClick}
+              style={{ cursor: "pointer" }}
+            />
+            <FaSignOutAlt
+              onClick={handleLogout}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+        )}
       </div>
     </nav>
   );

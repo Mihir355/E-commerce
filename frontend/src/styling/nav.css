@@ -14,7 +14,6 @@
   border-radius: 5px;
 }
 
-
 .options {
   display: flex;
   justify-content: space-around;
@@ -32,17 +31,45 @@
 .icons {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
-.icons svg {
-  margin: 0 10px;
-  cursor: pointer;
+.dropdown-icon {
   font-size: 1.75em;
   color: #231F20;
 }
 
-.logout-icon {
-  color: #e74c3c;
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #baa69d;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-menu svg {
+  margin: 5px 0;
+  font-size: 1.75em;
+  color: #231F20;
+}
+
+@media (min-width: 580px) {
+  .dropdown-icon {
+    display: none;
+  }
+  .icons svg {
+    margin: 0 10px;
+    font-size: 1.75em;
+  }
+}
+
+@media (max-width: 580px) {
+  .icons svg:not(.dropdown-icon) {
+    display: none;
+  }
 }
 
 @font-face {
