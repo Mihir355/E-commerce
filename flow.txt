@@ -1,0 +1,12 @@
+navbar never leaves except when we are in the bag page
+navbar consists logo, men, women, search-bar, profile, wish-list, bag
+
+i)homepage
+on top will be a navbar
+below will be best offers
+below will be shop by category
+
+men and women will also have same as homepage
+
+on the search page, we will have all the items related to the searched item
+as well as have filters and sort by options

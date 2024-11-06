@@ -1,0 +1,50 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #baa69d;
+  color: #231F20;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.logo img {
+  height: 50px;
+  border-radius: 5px;
+}
+
+.options {
+  display: flex;
+  justify-content: space-around;
+  flex-grow: 1;
+}
+
+.options span {
+  margin: 0 20px;
+  cursor: pointer;
+  font-size: xx-large;
+  font-family: BebasNeue;
+  color: #231F20;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icons svg {
+  margin: 0 10px;
+  cursor: pointer;
+  font-size: 1.75em;
+  color: #231F20;
+}
+
+.logout-icon {
+  color: #e74c3c;
+}
+
+@font-face {
+  font-family: BebasNeue;
+  src: url(../BebasNeue-Regular.ttf);
+}

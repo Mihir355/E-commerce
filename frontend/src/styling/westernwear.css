@@ -1,0 +1,187 @@
+/* westernwear.css */
+
+.westernwear-section {
+  text-align: center;
+  padding: 20px;
+  font-family: BebasNeue;
+  color: #231F20;
+}
+@font-face {
+  font-family: BebasNeue;
+  src: url(../BebasNeue-Regular.ttf);
+}
+
+.westernwear-header {.westernwear-section {
+  text-align: center;
+  padding: 20px;
+  font-family: BebasNeue;
+  color: #231F20;
+}
+
+@font-face {
+  font-family: BebasNeue;
+  src: url(../BebasNeue-Regular.ttf);
+}
+
+.westernwear-header {
+  font-size: 40px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.westernwear-product-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.westernwear-product-card {
+  flex: 1 1 calc(25% - 20px);
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.westernwear-product-card:hover {
+  transform: scale(1.05);
+}
+
+.westernwear-product-card-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.westernwear-product-card-name {
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.westernwear-product-card-cost {
+  font-size: 1.2em;
+  color: #888;
+  margin-top: 5px;
+}
+
+.westernwear-go-back-container {
+  margin-top: 20px;
+}
+
+.westernwear-go-back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  font-family: BebasNeue;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.westernwear-go-back-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 1200px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(30% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(48% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(48% - 20px);
+  }
+}
+
+  font-size: 40px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.westernwear-product-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px; 
+}
+
+.westernwear-product-card {
+  flex: 1 1 calc(25% - 20px); 
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out; 
+}
+
+.westernwear-product-card:hover {
+  transform: scale(1.05); 
+}
+
+.westernwear-product-card-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.westernwear-product-card-name {
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.westernwear-product-card-cost {
+  font-size: 1.2em;
+  color: #888;
+  margin-top: 5px;
+}
+
+.westernwear-go-back-container {
+  margin-top: 20px;
+}
+
+.westernwear-go-back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  font-family: BebasNeue;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.westernwear-go-back-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 1200px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(30% - 20px); 
+  }
+}
+
+@media (max-width: 768px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(48% - 20px); 
+  }
+}
+
+@media (max-width: 480px) {
+  .westernwear-product-card {
+    flex: 1 1 calc(48% - 20px); 
+  }
+}

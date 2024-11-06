@@ -1,0 +1,93 @@
+.kidspage-container {
+  text-align: center;
+  padding: 20px;
+  font-family: BebasNeue;
+  color: #231F20;
+}
+
+@font-face {
+  font-family: BebasNeue;
+  src: url(../BebasNeue-Regular.ttf);
+}
+
+.kidspage-header {
+  font-size: 40px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.kidspage-product-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.kidspage-product-card {
+  flex: 0 0 calc(25% - 20px);
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.kidspage-product-card:hover {
+  transform: scale(1.05);
+}
+
+.kidspage-product-card-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.kidspage-product-card-name {
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.kidspage-product-card-cost {
+  font-size: 1.2em;
+  color: #888;
+  margin-top: 5px;
+}
+
+.kidspage-go-back-container {
+  margin-top: 20px;
+}
+
+.kidspage-go-back-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  font-family: BebasNeue;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.kidspage-go-back-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 1200px) {
+  .kidspage-product-card {
+    flex: 0 0 calc(30% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .kidspage-product-card {
+    flex: 0 0 calc(48% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .kidspage-product-card {
+    flex: 0 0 98%;
+  }
+}
