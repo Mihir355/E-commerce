@@ -1,6 +1,10 @@
+body {
+  overflow-x: hidden;
+}
+
 .navbar {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
   padding: 10px;
   background-color: #baa69d;
@@ -9,24 +13,15 @@
   margin: 10px;
 }
 
-.logo img {
-  height: 50px;
-  border-radius: 5px;
+.logo {
+  cursor: pointer;
 }
-
 
 .options {
   display: flex;
   justify-content: space-around;
-  flex-grow: 1;
-}
-
-.options span {
-  margin: 0 20px;
-  cursor: pointer;
-  font-size: xx-large;
-  font-family: BebasNeue;
-  color: #231F20;
+  width: 100%;
+  margin: 10px 0;
 }
 
 .icons {
@@ -48,4 +43,46 @@
 @font-face {
   font-family: BebasNeue;
   src: url(../BebasNeue-Regular.ttf);
+}
+
+.options span {
+  margin: 0 20px;
+  cursor: pointer;
+  font-size: xx-large;
+  font-family: BebasNeue;
+  color: #231F20;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    align-items: center;
+  }
+
+  .options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .icons {
+    margin-top: 10px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .dropdown-icon {
+    font-size: 1.5em;
+    display: block;
+    margin-top: 5px;
+  }
+
+  .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #baa69d;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 100%;
+  }
 }
