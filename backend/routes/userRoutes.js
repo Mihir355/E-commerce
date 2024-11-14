@@ -5,15 +5,14 @@ const User = require("../models/user");
 router.post("/login", async (req, res) => {
   const { phoneNumber } = req.body;
 
-  if (!phoneNumber) {
+  if (!phoneNumber || phoneNumber.length !== 10) {
     return res
       .status(400)
-      .json({ success: false, message: "Phone number is required" });
+      .json({ success: false, message: "Phone number must be 10 digits" });
   }
 
   try {
     let user = await User.findOne({ phoneNumber });
-
     if (!user) {
       user = new User({ phoneNumber });
       await user.save();
@@ -36,15 +35,14 @@ router.post("/login", async (req, res) => {
 router.post("/create", async (req, res) => {
   const { phoneNumber, name, gender, age } = req.body;
 
-  if (!phoneNumber) {
+  if (!phoneNumber || phoneNumber.length !== 10) {
     return res
       .status(400)
-      .json({ success: false, message: "Phone number is required" });
+      .json({ success: false, message: "Phone number must be 10 digits" });
   }
 
   try {
     let user = await User.findOne({ phoneNumber });
-
     if (user) {
       return res
         .status(400)

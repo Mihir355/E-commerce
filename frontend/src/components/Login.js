@@ -12,20 +12,24 @@ const Login = () => {
   });
 
   const handleLogin = async () => {
+    if (phoneNumber.length !== 10) {
+      alert("Phone number must be exactly 10 digits.");
+      return;
+    }
+
     try {
       const response = await api.post("/api/user/login", { phoneNumber });
-
       const result = response.data;
+
       if (result.success) {
         localStorage.setItem("userId", result.userId);
         localStorage.setItem("phoneNumber", phoneNumber);
 
-        if (response.status === 201) {
-          alert("Registered successfully!");
-        } else if (response.status === 200) {
-          alert("Login successful!");
-        }
-
+        alert(
+          response.status === 201
+            ? "Registered successfully!"
+            : "Login successful!"
+        );
         navigate("/homepage");
       } else {
         console.error("Failed to login");
@@ -53,7 +57,9 @@ const Login = () => {
             placeholder="Phone Number"
             className="login-input-box"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) =>
+              setPhoneNumber(e.target.value.replace(/\D/, "").slice(0, 10))
+            }
             required
           />
           <button onClick={handleLogin} className="login-button">
