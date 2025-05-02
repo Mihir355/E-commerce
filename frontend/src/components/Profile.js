@@ -82,7 +82,7 @@ const Profile = () => {
             type="email"
             value={email}
             required
-            disabled
+            placeholder={email ? email : "Enter your email"}
             className="profile-input"
           />
         </div>
