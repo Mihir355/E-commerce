@@ -1,3 +1,4 @@
+// Login.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -29,7 +30,8 @@ const Login = () => {
     try {
       const res = await api.post("/api/user/verify-otp", { email, otp });
       if (res.data.success) {
-        localStorage.setItem("token", res.data.token); // store JWT
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("email", email); // store email too
         setMessage("Verified successfully!");
         navigate("/homepage");
       } else {
