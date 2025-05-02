@@ -4,7 +4,10 @@ import axios from "axios";
 import "../styling/login.css";
 
 const Login = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const api = axios.create({
@@ -12,31 +15,29 @@ const Login = () => {
   });
 
   const handleLogin = async () => {
-    if (phoneNumber.length !== 10) {
-      alert("Phone number must be exactly 10 digits.");
-      return;
-    }
-
     try {
-      const response = await api.post("/api/user/login", { phoneNumber });
-      const result = response.data;
+      const res = await api.post("/api/user/login", { email });
+      setShowOtpInput(true);
+      setMessage("OTP sent to your email.");
+    } catch (err) {
+      console.error(err);
+      setMessage("Error sending OTP. Try again.");
+    }
+  };
 
-      if (result.success) {
-        localStorage.setItem("userId", result.userId);
-        localStorage.setItem("phoneNumber", phoneNumber);
-
-        alert(
-          response.status === 201
-            ? "Registered successfully!"
-            : "Login successful!"
-        );
+  const handleVerifyOtp = async () => {
+    try {
+      const res = await api.post("/api/user/verify-otp", { email, otp });
+      if (res.data.success) {
+        localStorage.setItem("token", res.data.token); // store JWT
+        setMessage("Verified successfully!");
         navigate("/homepage");
       } else {
-        console.error("Failed to login");
+        setMessage("Invalid OTP. Try again.");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error logging in. Please try again.");
+    } catch (err) {
+      console.error(err);
+      setMessage("Verification failed.");
     }
   };
 
@@ -52,19 +53,34 @@ const Login = () => {
         </div>
         <div className="login-right-side">
           <h2 className="login-header">Login to Excitement</h2>
-          <input
-            type="text"
-            placeholder="Phone Number"
-            className="login-input-box"
-            value={phoneNumber}
-            onChange={(e) =>
-              setPhoneNumber(e.target.value.replace(/\D/, "").slice(0, 10))
-            }
-            required
-          />
-          <button onClick={handleLogin} className="login-button">
-            Login
-          </button>
+          {!showOtpInput ? (
+            <>
+              <input
+                type="email"
+                placeholder="Email"
+                className="login-input-box"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button onClick={handleLogin} className="login-button">
+                Send OTP
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                className="login-input-box"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+              <button onClick={handleVerifyOtp} className="login-button">
+                Verify OTP
+              </button>
+            </>
+          )}
+          {message && <div className="custom-warning-box">{message}</div>}
         </div>
       </div>
     </div>
