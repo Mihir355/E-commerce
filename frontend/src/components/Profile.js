@@ -8,7 +8,7 @@ const api = axios.create({
 });
 
 const Profile = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
@@ -16,12 +16,12 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedPhoneNumber = localStorage.getItem("phoneNumber");
-    if (storedPhoneNumber) {
-      setPhoneNumber(storedPhoneNumber);
-      const storedName = localStorage.getItem(`${storedPhoneNumber}_name`);
-      const storedGender = localStorage.getItem(`${storedPhoneNumber}_gender`);
-      const storedAge = localStorage.getItem(`${storedPhoneNumber}_age`);
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+      const storedName = localStorage.getItem(`${storedEmail}_name`);
+      const storedGender = localStorage.getItem(`${storedEmail}_gender`);
+      const storedAge = localStorage.getItem(`${storedEmail}_age`);
 
       if (storedName) setName(storedName);
       if (storedGender) setGender(storedGender);
@@ -47,16 +47,16 @@ const Profile = () => {
     e.preventDefault();
     try {
       const response = await api.put("/api/user/update", {
-        phoneNumber,
+        email,
         name,
         gender,
         age,
       });
 
       if (response.data.success) {
-        localStorage.setItem(`${phoneNumber}_name`, name);
-        localStorage.setItem(`${phoneNumber}_gender`, gender);
-        localStorage.setItem(`${phoneNumber}_age`, age);
+        localStorage.setItem(`${email}_name`, name);
+        localStorage.setItem(`${email}_gender`, gender);
+        localStorage.setItem(`${email}_age`, age);
 
         alert("Profile updated successfully!");
       } else {
@@ -77,14 +77,13 @@ const Profile = () => {
       <h2 className="profile-title">Update Profile</h2>
       <form onSubmit={handleUpdate} className="profile-form">
         <div className="formGroup">
-          <label className="profile-label">Phone Number:</label>
+          <label className="profile-label">Email:</label>
           <input
-            type="text"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            type="email"
+            value={email}
             required
-            className="profile-input"
             disabled
+            className="profile-input"
           />
         </div>
         <div className="formGroup">
