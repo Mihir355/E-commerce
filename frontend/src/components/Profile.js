@@ -81,6 +81,7 @@ const Profile = () => {
           <input
             type="email"
             value={email}
+            onChange={(e) => setName(e.target.value)}
             required
             placeholder={email ? email : "Enter your email"}
             className="profile-input"
