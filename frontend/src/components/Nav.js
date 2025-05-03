@@ -30,8 +30,14 @@ const Nav = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
-    navigate("/");
+    const email = localStorage.getItem("email");
+    localStorage.clear();
+    if (email) {
+      localStorage.removeItem(`${email}_name`);
+      localStorage.removeItem(`${email}_gender`);
+      localStorage.removeItem(`${email}_age`);
+    }
+    navigate("/login");
   };
 
   const toggleDropdown = () => {
