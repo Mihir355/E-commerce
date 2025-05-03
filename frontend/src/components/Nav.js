@@ -37,7 +37,7 @@ const Nav = () => {
       localStorage.removeItem(`${email}_gender`);
       localStorage.removeItem(`${email}_age`);
     }
-    navigate("/login");
+    navigate("/");
   };
 
   const toggleDropdown = () => {
