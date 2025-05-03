@@ -104,4 +104,27 @@ router.put("/update", async (req, res) => {
   }
 });
 
+// Get user details by email
+router.get("/details/:email", async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const { name, gender, age, email: userEmail } = user;
+    return res.status(200).json({
+      success: true,
+      user: { name, gender, age, email: userEmail },
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 module.exports = router;

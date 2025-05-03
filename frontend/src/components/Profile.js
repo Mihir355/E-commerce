@@ -19,13 +19,25 @@ const Profile = () => {
     const storedEmail = localStorage.getItem("email");
     if (storedEmail) {
       setEmail(storedEmail);
-      const storedName = localStorage.getItem(`${storedEmail}_name`);
-      const storedGender = localStorage.getItem(`${storedEmail}_gender`);
-      const storedAge = localStorage.getItem(`${storedEmail}_age`);
 
-      if (storedName) setName(storedName);
-      if (storedGender) setGender(storedGender);
-      if (storedAge) setAge(storedAge);
+      // Fetch user details from DB
+      const fetchUserDetails = async () => {
+        try {
+          const response = await api.get(`/api/user/details/${storedEmail}`);
+          if (response.data.success) {
+            const { name, gender, age } = response.data.user;
+            setName(name || "");
+            setGender(gender || "");
+            setAge(age || "");
+          } else {
+            console.error("User not found");
+          }
+        } catch (err) {
+          console.error("Error fetching user details:", err);
+        }
+      };
+
+      fetchUserDetails();
     }
 
     const fetchOrders = async () => {
