@@ -31,7 +31,7 @@ const Login = () => {
       const res = await api.post("/api/user/verify-otp", { email, otp });
       if (res.data.success) {
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("email", email); // store email too
+        localStorage.setItem("email", email);
         setMessage("Verified successfully!");
         navigate("/homepage");
       } else {
