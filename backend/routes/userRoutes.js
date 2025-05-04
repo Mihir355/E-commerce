@@ -80,26 +80,29 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // Update user profile
+// Update user profile using userId instead of email
 router.put("/update", async (req, res) => {
-  const { email, name, gender, age } = req.body;
+  const { userId, email, name, gender, age } = req.body;
 
-  if (!email) {
+  if (!userId) {
     return res
       .status(400)
-      .json({ success: false, message: "Email is required" });
+      .json({ success: false, message: "User ID is required" });
   }
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findById(userId);
     if (!user) {
       return res
-        .status(400)
+        .status(404)
         .json({ success: false, message: "User not found" });
     }
 
+    user.email = email;
     user.name = name;
     user.gender = gender;
     user.age = age;
+
     await user.save();
 
     return res.status(200).json({ success: true, user });

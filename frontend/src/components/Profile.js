@@ -57,8 +57,12 @@ const Profile = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const userId = localStorage.getItem("userId");
+    if (!userId) return alert("User not logged in");
+
     try {
       const response = await api.put("/api/user/update", {
+        userId, // Send this to identify the user
         email,
         name,
         gender,
