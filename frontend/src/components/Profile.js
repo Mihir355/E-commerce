@@ -39,31 +39,36 @@ const Profile = () => {
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
-    if (storedUserId && token) {
-      const fetchUserDetails = async () => {
-        try {
-          const response = await api.get(`/api/user/details/${storedUserId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.data.success) {
-            const { name, gender, age, email } = response.data.user;
-            setName(name || "");
-            setGender(gender || "");
-            setAge(age || "");
-            setEmail(email || "");
-          } else {
-            console.error("User not found");
-          }
-        } catch (err) {
-          console.error("Error fetching user details:", err);
-        }
-      };
 
-      fetchUserDetails();
-      fetchOrders(storedUserId, page);
+    if (!storedUserId || !token) {
+      navigate("/"); // redirect to login if not authenticated
+      return;
     }
+
+    const fetchUserDetails = async () => {
+      try {
+        const response = await api.get(`/api/user/details/${storedUserId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data.success) {
+          const { name, gender, age, email } = response.data.user;
+          setName(name || "");
+          setGender(gender || "");
+          setAge(age || "");
+          setEmail(email || "");
+        } else {
+          console.error("User not found");
+        }
+      } catch (err) {
+        console.error("Error fetching user details:", err);
+        navigate("/"); // redirect if token is invalid or expired
+      }
+    };
+
+    fetchUserDetails();
+    fetchOrders(storedUserId, page);
   }, [page, token]);
 
   const handleUpdate = async (e) => {
