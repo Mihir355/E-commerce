@@ -104,8 +104,6 @@ const Profile = () => {
   };
 
   const handleGoBack = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
     navigate("/homepage");
   };
 
