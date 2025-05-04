@@ -10,40 +10,45 @@ const api = axios.create({
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 5;
   const navigate = useNavigate();
 
   const getUserId = () => {
     return localStorage.getItem("userId");
   };
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const userId = getUserId();
-        if (userId) {
-          const response = await api.get(`/api/wishlist/${userId}`);
-          setWishlistItems(response.data);
-        } else {
-          console.log("User not logged in");
-        }
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching wishlist:", err);
-        setLoading(false);
+  const fetchWishlist = async (page = 1) => {
+    setLoading(true);
+    try {
+      const userId = getUserId();
+      if (userId) {
+        const response = await api.get(`/api/wishlist/${userId}`, {
+          params: { page, limit: itemsPerPage },
+        });
+        setWishlistItems(response.data.wishlist);
+        setTotalItems(response.data.total);
+      } else {
+        console.log("User not logged in");
       }
-    };
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching wishlist:", err);
+      setLoading(false);
+    }
+  };
 
-    fetchWishlist();
-  }, []);
+  useEffect(() => {
+    fetchWishlist(currentPage);
+  }, [currentPage]);
 
   const handleRemoveFromWishlist = async (productId) => {
     try {
       const userId = getUserId();
       if (userId) {
         await api.post(`/api/wishlist/remove`, { userId, productId });
-        setWishlistItems((prevItems) =>
-          prevItems.filter((item) => item._id !== productId)
-        );
+        fetchWishlist(currentPage); // refresh the list
       } else {
         console.log("User not logged in");
       }
@@ -58,7 +63,6 @@ const Wishlist = () => {
       if (userId) {
         await api.post(`/api/cart/add`, { userId, productId });
         await handleRemoveFromWishlist(productId);
-
         alert("Item moved to cart!");
       } else {
         console.log("User not logged in");
@@ -67,6 +71,8 @@ const Wishlist = () => {
       console.error("Error adding to cart and removing from wishlist:", err);
     }
   };
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   if (loading) return <div className="wishlist-loading-spinner"></div>;
 
@@ -77,32 +83,57 @@ const Wishlist = () => {
         Go Back
       </button>
       {wishlistItems.length > 0 ? (
-        <ul className="wishlist-items-list">
-          {wishlistItems.map((product) => (
-            <li key={product._id} className="wishlist-item">
-              <img
-                src={product.img}
-                alt={product.name}
-                className="wishlist-item-img"
-              />
-              <span className="wishlist-item-name">{product.name}</span>
-              <button
-                className="wishlist-item-remove-button"
-                onClick={() => handleRemoveFromWishlist(product._id)}
-              >
-                Remove
-              </button>
-              <button
-                className="wishlist-item-add-to-cart-button"
-                onClick={() =>
-                  handleAddToCartAndRemoveFromWishlist(product._id)
-                }
-              >
-                Add to Cart
-              </button>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="wishlist-items-list">
+            {wishlistItems.map((product) => (
+              <li key={product._id} className="wishlist-item">
+                <img
+                  src={product.img}
+                  alt={product.name}
+                  className="wishlist-item-img"
+                />
+                <span className="wishlist-item-name">{product.name}</span>
+                <button
+                  className="wishlist-item-remove-button"
+                  onClick={() => handleRemoveFromWishlist(product._id)}
+                >
+                  Remove
+                </button>
+                <button
+                  className="wishlist-item-add-to-cart-button"
+                  onClick={() =>
+                    handleAddToCartAndRemoveFromWishlist(product._id)
+                  }
+                >
+                  Add to Cart
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {/* Pagination Controls */}
+          <div className="wishlist-pagination">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="wishlist-pagination-button"
+            >
+              Previous
+            </button>
+            <span className="wishlist-pagination-info">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="wishlist-pagination-button"
+            >
+              Next
+            </button>
+          </div>
+        </>
       ) : (
         <p className="wishlist-empty-message">No items in wishlist.</p>
       )}

@@ -33,16 +33,28 @@ router.post("/remove", async (req, res) => {
 
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
   try {
     const processedProduct = await ProcessedProducts.findOne({
       userId,
     }).populate("wishlist");
 
     if (!processedProduct || processedProduct.wishlist.length === 0) {
-      return res.status(200).json({ message: "Wishlist is empty" });
+      return res.status(200).json({ wishlist: [], total: 0 });
     }
 
-    res.status(200).json(processedProduct.wishlist);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedWishlist = processedProduct.wishlist.slice(
+      startIndex,
+      endIndex
+    );
+    const totalItems = processedProduct.wishlist.length;
+
+    res.status(200).json({ wishlist: paginatedWishlist, total: totalItems });
   } catch (err) {
     res.status(500).json({ message: "Error fetching wishlist", error: err });
   }

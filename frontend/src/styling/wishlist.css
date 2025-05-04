@@ -114,3 +114,29 @@
 .wishlist-item-add-to-cart-button:hover {
   background-color: #218838;
 }
+
+.wishlist-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.wishlist-pagination-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.wishlist-pagination-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.wishlist-pagination-info {
+  font-weight: bold;
+}
