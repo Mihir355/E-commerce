@@ -4,8 +4,8 @@ const Order = require("../models/orderModel");
 
 router.post("/", async (req, res) => {
   try {
-    const { email, products } = req.body;
-    const newOrder = new Order({ email, products });
+    const { userId, products } = req.body;
+    const newOrder = new Order({ userId, products });
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (err) {
