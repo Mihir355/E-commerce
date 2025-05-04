@@ -46,7 +46,7 @@ const Cart = () => {
       const userId = getUserId();
       if (userId) {
         await api.post(`/api/cart/remove`, { userId, productId });
-        fetchCart(page); // reload current page
+        fetchCart(page);
         alert("Item removed from cart!");
       }
     } catch (err) {
@@ -101,23 +101,20 @@ const Cart = () => {
             ))}
           </ul>
 
-          {/* Pagination Controls */}
           <div className="cart-pagination">
             <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
               className="cart-pagination-button"
             >
               Previous
             </button>
-            <span className="cart-pagination-info">
-              Page {currentPage} of {totalPages}
+            <span className="cart-page-info">
+              Page {page} of {totalPages}
             </span>
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
+              disabled={page === totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
               className="cart-pagination-button"
             >
               Next
