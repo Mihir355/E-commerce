@@ -102,21 +102,23 @@ const Cart = () => {
           </ul>
 
           {/* Pagination Controls */}
-          <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <div className="cart-pagination">
             <button
-              disabled={page === 1}
-              onClick={() => setPage((prev) => prev - 1)}
-              className="cart-go-back-button"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="cart-pagination-button"
             >
               Previous
             </button>
-            <span style={{ margin: "0 10px" }}>
-              Page {page} of {totalPages}
+            <span className="cart-pagination-info">
+              Page {currentPage} of {totalPages}
             </span>
             <button
-              disabled={page === totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-              className="cart-go-back-button"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="cart-pagination-button"
             >
               Next
             </button>
