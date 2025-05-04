@@ -3,21 +3,21 @@ const router = express.Router();
 const User = require("../models/user");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-
-const otpStore = new Map(); // Temporarily store OTPs in memory (not recommended for production)
+const dotenv = require("dotenv").config();
+const otpStore = new Map();
+const authenticateToken = require("../middleware/auth");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // set in .env
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
 
-// Send OTP to email
+// Send OTP
 router.post("/login", async (req, res) => {
   const { email } = req.body;
-
   if (!email) {
     return res
       .status(400)
@@ -66,29 +66,23 @@ router.post("/verify-otp", async (req, res) => {
     return res.status(400).json({ success: false, message: "User not found" });
   }
 
-  otpStore.delete(email); // Clean up
+  otpStore.delete(email);
 
-  const token = jwt.sign({ userId: user._id }, "secret-key", {
-    expiresIn: "7d",
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
   });
 
   return res.status(200).json({
     success: true,
     token,
-    userId: user._id, // send userId here
+    userId: user._id,
   });
 });
 
-// Update user profile
-// Update user profile using userId instead of email
-router.put("/update", async (req, res) => {
-  const { userId, email, name, gender, age } = req.body;
-
-  if (!userId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "User ID is required" });
-  }
+// 🔐 Update user profile
+router.put("/update", authenticateToken, async (req, res) => {
+  const { email, name, gender, age } = req.body;
+  const userId = req.user.userId;
 
   try {
     const user = await User.findById(userId);
@@ -102,7 +96,6 @@ router.put("/update", async (req, res) => {
     user.name = name;
     user.gender = gender;
     user.age = age;
-
     await user.save();
 
     return res.status(200).json({ success: true, user });
@@ -112,9 +105,13 @@ router.put("/update", async (req, res) => {
   }
 });
 
-// Get user details by userId
-router.get("/details/:userId", async (req, res) => {
+// 🔐 Get user details
+router.get("/details/:userId", authenticateToken, async (req, res) => {
   const { userId } = req.params;
+
+  if (req.user.userId !== userId) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
 
   try {
     const user = await User.findById(userId);
@@ -125,10 +122,9 @@ router.get("/details/:userId", async (req, res) => {
     }
 
     const { name, gender, age, email } = user;
-    return res.status(200).json({
-      success: true,
-      user: { name, gender, age, email },
-    });
+    return res
+      .status(200)
+      .json({ success: true, user: { name, gender, age, email } });
   } catch (error) {
     console.error("Error fetching user details:", error);
     return res.status(500).json({ success: false, message: "Server error" });

@@ -18,10 +18,17 @@ const Profile = () => {
   const navigate = useNavigate();
   const limit = 5;
 
+  const token = localStorage.getItem("token");
+
   const fetchOrders = async (userId, currentPage = 1) => {
     try {
       const response = await api.get(
-        `/api/orders/user/${userId}?page=${currentPage}&limit=${limit}`
+        `/api/orders/user/${userId}?page=${currentPage}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
@@ -32,10 +39,14 @@ const Profile = () => {
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
+    if (storedUserId && token) {
       const fetchUserDetails = async () => {
         try {
-          const response = await api.get(`/api/user/details/${storedUserId}`);
+          const response = await api.get(`/api/user/details/${storedUserId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           if (response.data.success) {
             const { name, gender, age, email } = response.data.user;
             setName(name || "");
@@ -53,21 +64,28 @@ const Profile = () => {
       fetchUserDetails();
       fetchOrders(storedUserId, page);
     }
-  }, [page]);
+  }, [page, token]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem("userId");
-    if (!userId) return alert("User not logged in");
+    if (!userId || !token) return alert("User not logged in");
 
     try {
-      const response = await api.put("/api/user/update", {
-        userId, // Send this to identify the user
-        email,
-        name,
-        gender,
-        age,
-      });
+      const response = await api.put(
+        "/api/user/update",
+        {
+          email,
+          name,
+          gender,
+          age,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         alert("Profile updated successfully!");
@@ -81,6 +99,8 @@ const Profile = () => {
   };
 
   const handleGoBack = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     navigate("/homepage");
   };
 
