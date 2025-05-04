@@ -9,21 +9,27 @@ const api = axios.create({
 
 const Womenpage = () => {
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const productsPerPage = 6;
   const category = "women";
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get(`api/products/category/${category}`);
-        setProducts(response.data);
+        const response = await api.get(
+          `api/products/category/${category}?page=${currentPage}&limit=${productsPerPage}`
+        );
+        setProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
       } catch (err) {
         console.error("Error fetching products:", err);
       }
     };
 
     fetchProducts();
-  }, [category]);
+  }, [category, currentPage]);
 
   const handleProductClick = (productId) => {
     navigate(`/homepage/womens-wear/product/${productId}`);
@@ -49,6 +55,28 @@ const Womenpage = () => {
           </div>
         ))}
       </div>
+
+      <div className="pagination-controls">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          {" "}
+          Page {currentPage} of {totalPages}{" "}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+
       <div className="womenpage-go-back-container">
         <button
           className="womenpage-go-back-button"
