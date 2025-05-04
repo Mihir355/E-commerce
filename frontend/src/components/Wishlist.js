@@ -15,20 +15,19 @@ const Wishlist = () => {
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+  const getToken = () => localStorage.getItem("token");
+  const getUserId = () => localStorage.getItem("userId");
 
-    if (!token || !userId) {
-      navigate("/");
-    } else {
-      fetchWishlist(userId, token, currentPage);
-    }
-  }, [currentPage]);
-
-  const fetchWishlist = async (userId, token, page = 1) => {
+  const fetchWishlist = async (page = 1) => {
     setLoading(true);
     try {
+      const token = getToken();
+      const userId = getUserId();
+      if (!token || !userId) {
+        navigate("/");
+        return;
+      }
+
       const response = await api.get(`/api/wishlist/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { page, limit: itemsPerPage },
@@ -45,8 +44,14 @@ const Wishlist = () => {
     }
   };
 
+  useEffect(() => {
+    fetchWishlist(currentPage);
+  }, [currentPage]);
+
   const handleRemoveFromWishlist = async (productId) => {
     try {
+      const token = getToken();
+      const userId = getUserId();
       await api.post(
         `/api/wishlist/remove`,
         { userId, productId },
@@ -60,6 +65,8 @@ const Wishlist = () => {
 
   const handleAddToCartAndRemoveFromWishlist = async (productId) => {
     try {
+      const token = getToken();
+      const userId = getUserId();
       await api.post(
         `/api/cart/add`,
         { userId, productId },
