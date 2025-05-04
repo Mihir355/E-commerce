@@ -15,9 +15,22 @@ router.post("/", async (req, res) => {
 
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
   try {
-    const orders = await Order.find({ userId }).populate("products");
-    res.json(orders);
+    const orders = await Order.find({ userId })
+      .populate("products")
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const totalOrders = await Order.countDocuments({ userId });
+
+    res.json({
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }

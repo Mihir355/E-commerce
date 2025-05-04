@@ -7,18 +7,20 @@ const api = axios.create({
   baseURL: "https://e-commerce-dh0b.onrender.com",
 });
 
+const ORDERS_PER_PAGE = 5;
+
 const Profile = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
-      // Fetch user details from DB
       const fetchUserDetails = async () => {
         try {
           const response = await api.get(`/api/user/details/${storedUserId}`);
@@ -36,11 +38,10 @@ const Profile = () => {
         }
       };
 
-      // Fetch orders by userId
       const fetchOrders = async () => {
         try {
           const response = await api.get(`/api/orders/user/${storedUserId}`);
-          setOrders(response.data);
+          setOrders(response.data || []);
         } catch (err) {
           console.error("Error fetching orders:", err);
         }
@@ -74,6 +75,18 @@ const Profile = () => {
 
   const handleGoBack = () => {
     navigate("/homepage");
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
+  const currentOrders = orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
+
+  const handlePageChange = (direction) => {
+    setCurrentPage((prevPage) => {
+      const nextPage = direction === "next" ? prevPage + 1 : prevPage - 1;
+      return Math.min(Math.max(nextPage, 1), totalPages);
+    });
   };
 
   return (
@@ -143,26 +156,58 @@ const Profile = () => {
 
       <div className="orders-section">
         <h3 className="orders-title">Your Orders</h3>
-        {orders.length > 0 ? (
-          <ul className="orders-list">
-            {orders.map((order, index) => (
-              <li key={order._id} className="order-item">
-                <h4 className="order-title">Order {index + 1}</h4>
-                <div className="products-container">
-                  {order.products.map((product) => (
-                    <div key={product._id} className="product-item">
-                      <img
-                        src={product.img}
-                        alt={product.name}
-                        className="product-image"
-                      />
-                      <p className="product-description">{product.name}</p>
-                    </div>
-                  ))}
-                </div>
-              </li>
-            ))}
-          </ul>
+        {currentOrders.length > 0 ? (
+          <>
+            <ul className="orders-list">
+              {currentOrders.map((order, index) => (
+                <li key={order._id} className="order-item">
+                  <h4 className="order-title">
+                    Order {(currentPage - 1) * ORDERS_PER_PAGE + index + 1}
+                  </h4>
+                  <div className="products-container">
+                    {order.products.map((product) => (
+                      <div key={product._id} className="product-item">
+                        <img
+                          src={product.img}
+                          alt={product.name}
+                          className="product-image"
+                        />
+                        <p className="product-description">{product.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div
+              className="pagination-buttons"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "20px",
+                gap: "10px",
+              }}
+            >
+              <button
+                className="profile-button"
+                onClick={() => handlePageChange("prev")}
+                disabled={currentPage === 1}
+              >
+                Prev
+              </button>
+              <span style={{ alignSelf: "center", color: "#333" }}>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                className="profile-button"
+                onClick={() => handlePageChange("next")}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </>
         ) : (
           <p className="no-orders-message">
             You have not placed any orders yet.
