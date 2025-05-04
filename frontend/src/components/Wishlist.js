@@ -20,11 +20,10 @@ const Wishlist = () => {
 
   useEffect(() => {
     if (!token || !userId) {
-      navigate("/login");
+      navigate("/");
     } else {
       fetchWishlist(currentPage);
     }
-    // eslint-disable-next-line
   }, [currentPage]);
 
   const fetchWishlist = async (page = 1) => {
@@ -39,7 +38,7 @@ const Wishlist = () => {
     } catch (err) {
       console.error("Error fetching wishlist:", err);
       if (err.response?.status === 401) {
-        navigate("/login");
+        navigate("/");
       }
     } finally {
       setLoading(false);

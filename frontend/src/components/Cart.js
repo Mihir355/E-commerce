@@ -30,11 +30,11 @@ const Cart = () => {
         setCartItems(response.data.products);
         setTotalPages(response.data.totalPages);
       } else {
-        navigate("/login");
+        navigate("/");
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        navigate("/login");
+        navigate("/");
       } else {
         console.error("Error fetching cart:", err);
       }
