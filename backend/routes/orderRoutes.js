@@ -4,8 +4,8 @@ const Order = require("../models/orderModel");
 
 router.post("/", async (req, res) => {
   try {
-    const { userId, products } = req.body;
-    const newOrder = new Order({ userId, products });
+    const { email, products } = req.body;
+    const newOrder = new Order({ email, products });
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (err) {
@@ -13,13 +13,13 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:userId", async (req, res) => {
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
   try {
-    const { userId } = req.params;
-    const orders = await Order.find({ userId }).exec();
-    res.status(200).json(orders);
+    const orders = await Order.find({ userId }).populate("products");
+    res.json(orders);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch orders" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 

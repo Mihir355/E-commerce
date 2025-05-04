@@ -70,8 +70,13 @@ router.post("/verify-otp", async (req, res) => {
 
   const token = jwt.sign({ userId: user._id }, "secret-key", {
     expiresIn: "7d",
-  }); // Optional
-  return res.status(200).json({ success: true, token });
+  });
+
+  return res.status(200).json({
+    success: true,
+    token,
+    userId: user._id, // send userId here
+  });
 });
 
 // Update user profile
@@ -104,22 +109,22 @@ router.put("/update", async (req, res) => {
   }
 });
 
-// Get user details by email
-router.get("/details/:email", async (req, res) => {
-  const { email } = req.params;
+// Get user details by userId
+router.get("/details/:userId", async (req, res) => {
+  const { userId } = req.params;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findById(userId);
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    const { name, gender, age, email: userEmail } = user;
+    const { name, gender, age, email } = user;
     return res.status(200).json({
       success: true,
-      user: { name, gender, age, email: userEmail },
+      user: { name, gender, age, email },
     });
   } catch (error) {
     console.error("Error fetching user details:", error);

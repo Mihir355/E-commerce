@@ -16,19 +16,18 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem("email");
-    if (storedEmail) {
-      setEmail(storedEmail);
-
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
       // Fetch user details from DB
       const fetchUserDetails = async () => {
         try {
-          const response = await api.get(`/api/user/details/${storedEmail}`);
+          const response = await api.get(`/api/user/details/${storedUserId}`);
           if (response.data.success) {
-            const { name, gender, age } = response.data.user;
+            const { name, gender, age, email } = response.data.user;
             setName(name || "");
             setGender(gender || "");
             setAge(age || "");
+            setEmail(email || "");
           } else {
             console.error("User not found");
           }
@@ -37,22 +36,19 @@ const Profile = () => {
         }
       };
 
-      fetchUserDetails();
-    }
-
-    const fetchOrders = async () => {
-      const userId = localStorage.getItem("userId");
-      if (userId) {
+      // Fetch orders by userId
+      const fetchOrders = async () => {
         try {
-          const response = await api.get(`/api/orders/${userId}`);
+          const response = await api.get(`/api/orders/user/${storedUserId}`);
           setOrders(response.data);
         } catch (err) {
           console.error("Error fetching orders:", err);
         }
-      }
-    };
+      };
 
-    fetchOrders();
+      fetchUserDetails();
+      fetchOrders();
+    }
   }, []);
 
   const handleUpdate = async (e) => {
@@ -66,10 +62,6 @@ const Profile = () => {
       });
 
       if (response.data.success) {
-        localStorage.setItem(`${email}_name`, name);
-        localStorage.setItem(`${email}_gender`, gender);
-        localStorage.setItem(`${email}_age`, age);
-
         alert("Profile updated successfully!");
       } else {
         alert("Failed to update profile: " + response.data.message);
@@ -95,7 +87,7 @@ const Profile = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder={email ? email : "Enter your email"}
+            placeholder="Enter your email"
             className="profile-input"
           />
         </div>
@@ -107,7 +99,7 @@ const Profile = () => {
             onChange={(e) => setName(e.target.value)}
             required
             className="profile-input"
-            placeholder={name ? name : "Enter your name"}
+            placeholder="Enter your name"
           />
         </div>
         <div className="formGroup">
@@ -132,7 +124,7 @@ const Profile = () => {
             onChange={(e) => setAge(e.target.value)}
             required
             className="profile-input"
-            placeholder={age ? age : "Enter your age"}
+            placeholder="Enter your age"
           />
         </div>
         <div className="buttons">
