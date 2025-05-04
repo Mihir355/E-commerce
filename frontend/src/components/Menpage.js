@@ -9,29 +9,32 @@ const api = axios.create({
 
 const Menpage = () => {
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const category = "Men";
   const navigate = useNavigate();
+  const limit = 6;
+
+  const fetchProducts = async (page) => {
+    try {
+      const response = await api.get(
+        `/api/products/category/${category}?page=${page}&limit=${limit}`
+      );
+      setProducts(response.data.products);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await api.get(`api/products/category/${category}`);
-        setProducts(response.data);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    };
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
-    fetchProducts();
-  }, [category]);
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
-  const handleProductClick = (productId) => {
+  const handleGoBack = () => navigate(-1);
+  const handleProductClick = (productId) =>
     navigate(`/homepage/mens-wear/product/${productId}`);
-  };
 
   return (
     <div className="menpage-container">
@@ -53,6 +56,26 @@ const Menpage = () => {
           </div>
         ))}
       </div>
+
+      {/* Pagination buttons */}
+      <div className="pagination-controls">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          Prev
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
+      </div>
+
       <div className="menpage-go-back-container">
         <button className="menpage-go-back-button" onClick={handleGoBack}>
           Go Back

@@ -15,8 +15,20 @@ router.get("/:subcategory", async (req, res) => {
 router.get("/category/:category", async (req, res) => {
   try {
     const { category } = req.params;
-    const products = await Product.find({ category: category });
-    res.json(products);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const skip = (page - 1) * limit;
+
+    const total = await Product.countDocuments({ category });
+
+    const products = await Product.find({ category }).skip(skip).limit(limit);
+
+    res.json({
+      success: true,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      products,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
