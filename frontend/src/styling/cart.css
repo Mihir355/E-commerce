@@ -126,21 +126,19 @@
 }
 
 .cart-pagination-button {
-  padding: 8px 12px;
+  padding: 8px 16px;
   background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 6px;
+  color: white;
   cursor: pointer;
-  font-size: 14px;
-  font-family: BebasNeue, Arial, sans-serif;
+  border-radius: 5px;
 }
 
 .cart-pagination-button:disabled {
-  background-color: #b0c4de;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.cart-pagination-button:hover:not(:disabled) {
-  background-color: #0056b3;
+.cart-pagination-info {
+  font-weight: bold;
 }
