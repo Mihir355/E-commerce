@@ -7,16 +7,28 @@ const api = axios.create({
   baseURL: "https://e-commerce-dh0b.onrender.com",
 });
 
-const ORDERS_PER_PAGE = 5;
-
 const Profile = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [age, setAge] = useState("");
   const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+  const limit = 5;
+
+  const fetchOrders = async (userId, currentPage = 1) => {
+    try {
+      const response = await api.get(
+        `/api/orders/user/${userId}?page=${currentPage}&limit=${limit}`
+      );
+      setOrders(response.data.orders);
+      setTotalPages(response.data.totalPages);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -38,19 +50,10 @@ const Profile = () => {
         }
       };
 
-      const fetchOrders = async () => {
-        try {
-          const response = await api.get(`/api/orders/user/${storedUserId}`);
-          setOrders(response.data || []);
-        } catch (err) {
-          console.error("Error fetching orders:", err);
-        }
-      };
-
       fetchUserDetails();
-      fetchOrders();
+      fetchOrders(storedUserId, page);
     }
-  }, []);
+  }, [page]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -77,22 +80,17 @@ const Profile = () => {
     navigate("/homepage");
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(orders.length / ORDERS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
-  const currentOrders = orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
-
-  const handlePageChange = (direction) => {
-    setCurrentPage((prevPage) => {
-      const nextPage = direction === "next" ? prevPage + 1 : prevPage - 1;
-      return Math.min(Math.max(nextPage, 1), totalPages);
-    });
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
   };
 
   return (
     <div className="profile-container">
       <h2 className="profile-title">Update Profile</h2>
       <form onSubmit={handleUpdate} className="profile-form">
+        {/* user details */}
         <div className="formGroup">
           <label className="profile-label">Email:</label>
           <input
@@ -156,13 +154,13 @@ const Profile = () => {
 
       <div className="orders-section">
         <h3 className="orders-title">Your Orders</h3>
-        {currentOrders.length > 0 ? (
+        {orders.length > 0 ? (
           <>
             <ul className="orders-list">
-              {currentOrders.map((order, index) => (
+              {orders.map((order, index) => (
                 <li key={order._id} className="order-item">
                   <h4 className="order-title">
-                    Order {(currentPage - 1) * ORDERS_PER_PAGE + index + 1}
+                    Order {(page - 1) * limit + index + 1}
                   </h4>
                   <div className="products-container">
                     {order.products.map((product) => (
@@ -179,30 +177,21 @@ const Profile = () => {
                 </li>
               ))}
             </ul>
-
-            <div
-              className="pagination-buttons"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "20px",
-                gap: "10px",
-              }}
-            >
+            <div className="pagination">
               <button
-                className="profile-button"
-                onClick={() => handlePageChange("prev")}
-                disabled={currentPage === 1}
+                className="page-button"
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
               >
                 Prev
               </button>
-              <span style={{ alignSelf: "center", color: "#333" }}>
-                Page {currentPage} of {totalPages}
+              <span className="page-info">
+                Page {page} of {totalPages}
               </span>
               <button
-                className="profile-button"
-                onClick={() => handlePageChange("next")}
-                disabled={currentPage === totalPages}
+                className="page-button"
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
               >
                 Next
               </button>
