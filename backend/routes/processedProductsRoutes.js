@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const processedProducts = require("../models/processedProducts");
+const authenticateToken = require("../middleware/auth");
 
-router.post("/add", async (req, res) => {
+// Add to cart
+router.post("/add", authenticateToken, async (req, res) => {
   const { userId, productId } = req.body;
   try {
     await processedProducts.updateOne(
@@ -16,7 +18,8 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/clear", async (req, res) => {
+// Clear cart
+router.post("/clear", authenticateToken, async (req, res) => {
   const { userId } = req.body;
   try {
     await processedProducts.updateOne({ userId }, { $set: { cart: [] } });
@@ -26,7 +29,8 @@ router.post("/clear", async (req, res) => {
   }
 });
 
-router.post("/remove", async (req, res) => {
+// Remove from cart
+router.post("/remove", authenticateToken, async (req, res) => {
   const { userId, productId } = req.body;
   try {
     await processedProducts.updateOne(
@@ -39,7 +43,8 @@ router.post("/remove", async (req, res) => {
   }
 });
 
-router.get("/:userId", async (req, res) => {
+// Get cart with pagination
+router.get("/:userId", authenticateToken, async (req, res) => {
   const { userId } = req.params;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
@@ -58,25 +63,27 @@ router.get("/:userId", async (req, res) => {
     const totalCart = await processedProducts
       .findOne({ userId })
       .populate("cart");
+
     const totalItems = totalCart?.cart?.length || 0;
+    const totalPages = Math.ceil(totalItems / limit);
 
     if (!processedProduct || processedProduct.cart.length === 0) {
       return res.status(200).json({ products: [], totalPages: 0 });
     }
 
-    const totalPages = Math.ceil(totalItems / limit);
     res.status(200).json({ products: processedProduct.cart, totalPages });
   } catch (err) {
     res.status(500).json({ message: "Error fetching cart", error: err });
   }
 });
 
-router.get("/check/:userId/:productId", async (req, res) => {
+// Check if item is in cart
+router.get("/check/:userId/:productId", authenticateToken, async (req, res) => {
   const { userId, productId } = req.params;
   try {
     const processedProduct = await processedProducts.findOne({ userId });
     if (!processedProduct) {
-      return res.status(200).json({ isInWishlist: false });
+      return res.status(200).json({ isInCart: false });
     }
 
     const isInCart = processedProduct.cart.includes(productId);

@@ -14,25 +14,30 @@ const Cart = () => {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
-  const getUserId = () => {
-    return localStorage.getItem("userId");
-  };
+  const getToken = () => localStorage.getItem("token");
+  const getUserId = () => localStorage.getItem("userId");
 
   const fetchCart = async (currentPage = 1) => {
     setLoading(true);
     try {
+      const token = getToken();
       const userId = getUserId();
-      if (userId) {
+      if (token && userId) {
         const response = await api.get(
-          `/api/cart/${userId}?page=${currentPage}&limit=5`
+          `/api/cart/${userId}?page=${currentPage}&limit=5`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setCartItems(response.data.products);
         setTotalPages(response.data.totalPages);
       } else {
-        console.log("User not logged in");
+        navigate("/login");
       }
     } catch (err) {
-      console.error("Error fetching cart:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        navigate("/login");
+      } else {
+        console.error("Error fetching cart:", err);
+      }
     }
     setLoading(false);
   };
@@ -43,9 +48,14 @@ const Cart = () => {
 
   const handleRemoveFromCart = async (productId) => {
     try {
+      const token = getToken();
       const userId = getUserId();
-      if (userId) {
-        await api.post(`/api/cart/remove`, { userId, productId });
+      if (userId && token) {
+        await api.post(
+          `/api/cart/remove`,
+          { userId, productId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         fetchCart(page);
         alert("Item removed from cart!");
       }
@@ -56,10 +66,19 @@ const Cart = () => {
 
   const handleBuyNow = async () => {
     try {
+      const token = getToken();
       const userId = getUserId();
-      if (userId && cartItems.length > 0) {
-        await api.post(`/api/orders`, { userId, products: cartItems });
-        await api.post(`/api/cart/clear`, { userId });
+      if (userId && token && cartItems.length > 0) {
+        await api.post(
+          `/api/orders`,
+          { userId, products: cartItems },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        await api.post(
+          `/api/cart/clear`,
+          { userId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setCartItems([]);
         alert("Purchase successful! Cart has been emptied.");
         setPage(1);
@@ -100,7 +119,6 @@ const Cart = () => {
               </li>
             ))}
           </ul>
-
           <div className="cart-pagination">
             <button
               disabled={page === 1}
@@ -120,7 +138,6 @@ const Cart = () => {
               Next
             </button>
           </div>
-
           <button className="cart-buy-now-button" onClick={handleBuyNow}>
             Buy Now
           </button>

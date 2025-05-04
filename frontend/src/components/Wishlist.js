@@ -15,43 +15,45 @@ const Wishlist = () => {
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
-  const getUserId = () => {
-    return localStorage.getItem("userId");
-  };
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    if (!token || !userId) {
+      navigate("/login");
+    } else {
+      fetchWishlist(currentPage);
+    }
+    // eslint-disable-next-line
+  }, [currentPage]);
 
   const fetchWishlist = async (page = 1) => {
     setLoading(true);
     try {
-      const userId = getUserId();
-      if (userId) {
-        const response = await api.get(`/api/wishlist/${userId}`, {
-          params: { page, limit: itemsPerPage },
-        });
-        setWishlistItems(response.data.wishlist);
-        setTotalItems(response.data.total);
-      } else {
-        console.log("User not logged in");
-      }
-      setLoading(false);
+      const response = await api.get(`/api/wishlist/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { page, limit: itemsPerPage },
+      });
+      setWishlistItems(response.data.wishlist);
+      setTotalItems(response.data.total);
     } catch (err) {
       console.error("Error fetching wishlist:", err);
+      if (err.response?.status === 401) {
+        navigate("/login");
+      }
+    } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchWishlist(currentPage);
-  }, [currentPage]);
-
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      const userId = getUserId();
-      if (userId) {
-        await api.post(`/api/wishlist/remove`, { userId, productId });
-        fetchWishlist(currentPage); // refresh the list
-      } else {
-        console.log("User not logged in");
-      }
+      await api.post(
+        `/api/wishlist/remove`,
+        { userId, productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchWishlist(currentPage);
     } catch (err) {
       console.error("Error removing from wishlist:", err);
     }
@@ -59,14 +61,13 @@ const Wishlist = () => {
 
   const handleAddToCartAndRemoveFromWishlist = async (productId) => {
     try {
-      const userId = getUserId();
-      if (userId) {
-        await api.post(`/api/cart/add`, { userId, productId });
-        await handleRemoveFromWishlist(productId);
-        alert("Item moved to cart!");
-      } else {
-        console.log("User not logged in");
-      }
+      await api.post(
+        `/api/cart/add`,
+        { userId, productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      await handleRemoveFromWishlist(productId);
+      alert("Item moved to cart!");
     } catch (err) {
       console.error("Error adding to cart and removing from wishlist:", err);
     }

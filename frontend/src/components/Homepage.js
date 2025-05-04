@@ -38,7 +38,6 @@ const Homepage = () => {
         <Route path="home-decor" element={<Decor />} />
         <Route path="beauty-products" element={<Beauty />} />
 
-        {/* Nested Route for ProductDetails */}
         <Route path=":category/product/:id" element={<ProductDetails />} />
       </Routes>
     </div>

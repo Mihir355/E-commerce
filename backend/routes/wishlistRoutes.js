@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const ProcessedProducts = require("../models/processedProducts");
+const auth = require("../middleware/auth");
 
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
   const { userId, productId } = req.body;
   try {
     await ProcessedProducts.updateOne(
@@ -16,7 +17,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/remove", async (req, res) => {
+router.post("/remove", auth, async (req, res) => {
   const { userId, productId } = req.body;
   try {
     await ProcessedProducts.updateOne(
@@ -31,7 +32,7 @@ router.post("/remove", async (req, res) => {
   }
 });
 
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", auth, async (req, res) => {
   const { userId } = req.params;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
@@ -60,7 +61,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-router.get("/check/:userId/:productId", async (req, res) => {
+router.get("/check/:userId/:productId", auth, async (req, res) => {
   const { userId, productId } = req.params;
   try {
     const processedProduct = await ProcessedProducts.findOne({ userId });
