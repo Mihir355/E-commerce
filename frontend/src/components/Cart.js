@@ -10,43 +10,44 @@ const api = axios.create({
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
   const getUserId = () => {
     return localStorage.getItem("userId");
   };
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const userId = getUserId();
-        if (userId) {
-          const response = await api.get(`/api/cart/${userId}`);
-          setCartItems(response.data);
-        } else {
-          console.log("User not logged in");
-        }
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching cart:", err);
-        setLoading(false);
+  const fetchCart = async (currentPage = 1) => {
+    setLoading(true);
+    try {
+      const userId = getUserId();
+      if (userId) {
+        const response = await api.get(
+          `/api/cart/${userId}?page=${currentPage}&limit=5`
+        );
+        setCartItems(response.data.products);
+        setTotalPages(response.data.totalPages);
+      } else {
+        console.log("User not logged in");
       }
-    };
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
+    setLoading(false);
+  };
 
-    fetchCart();
-  }, []);
+  useEffect(() => {
+    fetchCart(page);
+  }, [page]);
 
   const handleRemoveFromCart = async (productId) => {
     try {
       const userId = getUserId();
       if (userId) {
         await api.post(`/api/cart/remove`, { userId, productId });
-        setCartItems((prevItems) =>
-          prevItems.filter((item) => item._id !== productId)
-        );
+        fetchCart(page); // reload current page
         alert("Item removed from cart!");
-      } else {
-        console.log("User not logged in");
       }
     } catch (err) {
       console.error("Error removing from cart:", err);
@@ -61,6 +62,8 @@ const Cart = () => {
         await api.post(`/api/cart/clear`, { userId });
         setCartItems([]);
         alert("Purchase successful! Cart has been emptied.");
+        setPage(1);
+        setTotalPages(1);
       } else {
         alert("Cart is empty or user not logged in.");
       }
@@ -97,6 +100,28 @@ const Cart = () => {
               </li>
             ))}
           </ul>
+
+          {/* Pagination Controls */}
+          <div style={{ textAlign: "center", marginTop: "20px" }}>
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+              className="cart-go-back-button"
+            >
+              Previous
+            </button>
+            <span style={{ margin: "0 10px" }}>
+              Page {page} of {totalPages}
+            </span>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
+              className="cart-go-back-button"
+            >
+              Next
+            </button>
+          </div>
+
           <button className="cart-buy-now-button" onClick={handleBuyNow}>
             Buy Now
           </button>

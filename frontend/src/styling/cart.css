@@ -116,3 +116,30 @@
 .cart-buy-now-button:hover {
   background-color: #e67e22;
 }
+
+.cart-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.cart-pagination-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: BebasNeue, Arial, sans-serif;
+}
+
+.cart-pagination-button:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+.cart-pagination-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}

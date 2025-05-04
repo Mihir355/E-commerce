@@ -41,15 +41,31 @@ router.post("/remove", async (req, res) => {
 
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
   try {
     const processedProduct = await processedProducts
       .findOne({ userId })
+      .populate({
+        path: "cart",
+        options: {
+          skip: (page - 1) * limit,
+          limit: limit,
+        },
+      });
+
+    const totalCart = await processedProducts
+      .findOne({ userId })
       .populate("cart");
+    const totalItems = totalCart?.cart?.length || 0;
 
     if (!processedProduct || processedProduct.cart.length === 0) {
-      return res.status(200).json({ message: "Cart is empty" });
+      return res.status(200).json({ products: [], totalPages: 0 });
     }
-    res.status(200).json(processedProduct.cart);
+
+    const totalPages = Math.ceil(totalItems / limit);
+    res.status(200).json({ products: processedProduct.cart, totalPages });
   } catch (err) {
     res.status(500).json({ message: "Error fetching cart", error: err });
   }
