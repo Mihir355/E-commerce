@@ -15,18 +15,18 @@ const Wishlist = () => {
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
     if (!token || !userId) {
       navigate("/");
     } else {
-      fetchWishlist(currentPage);
+      fetchWishlist(userId, token, currentPage);
     }
   }, [currentPage]);
 
-  const fetchWishlist = async (page = 1) => {
+  const fetchWishlist = async (userId, token, page = 1) => {
     setLoading(true);
     try {
       const response = await api.get(`/api/wishlist/${userId}`, {
