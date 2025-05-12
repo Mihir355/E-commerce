@@ -16,8 +16,11 @@ const ProductDetails = () => {
   const navigate = useNavigate();
 
   const getUserId = () => {
-    const userId = localStorage.getItem("userId");
-    return userId;
+    return localStorage.getItem("userId");
+  };
+
+  const getToken = () => {
+    return localStorage.getItem("token");
   };
 
   useEffect(() => {
@@ -35,8 +38,14 @@ const ProductDetails = () => {
     const checkIfInWishlist = async () => {
       try {
         const userId = getUserId();
-        if (userId) {
-          const response = await api.get(`/api/wishlist/check/${userId}/${id}`);
+        const token = getToken();
+        if (userId && token) {
+          const response = await api.get(
+            `/api/wishlist/check/${userId}/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           setInWishlist(response.data.isInWishlist);
         }
       } catch (err) {
@@ -47,8 +56,11 @@ const ProductDetails = () => {
     const checkIfInCart = async () => {
       try {
         const userId = getUserId();
-        if (userId) {
-          const response = await api.get(`/api/cart/check/${userId}/${id}`);
+        const token = getToken();
+        if (userId && token) {
+          const response = await api.get(`/api/cart/check/${userId}/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setInCart(response.data.isInCart);
         }
       } catch (err) {
@@ -68,9 +80,14 @@ const ProductDetails = () => {
   const handleAddToWishlist = async () => {
     try {
       const userId = getUserId();
-      if (userId) {
+      const token = getToken();
+      if (userId && token) {
         if (!inWishlist) {
-          await api.post(`/api/wishlist/add`, { userId, productId: id });
+          await api.post(
+            `/api/wishlist/add`,
+            { userId, productId: id },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
           setInWishlist(true);
           alert("Added to Wishlist");
         } else {
@@ -88,8 +105,13 @@ const ProductDetails = () => {
   const handleRemoveFromWishlist = async () => {
     try {
       const userId = getUserId();
-      if (userId) {
-        await api.post(`/api/wishlist/remove`, { userId, productId: id });
+      const token = getToken();
+      if (userId && token) {
+        await api.post(
+          `/api/wishlist/remove`,
+          { userId, productId: id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setInWishlist(false);
         alert("Removed from Wishlist");
       } else {
@@ -104,9 +126,14 @@ const ProductDetails = () => {
   const handleAddToCart = async () => {
     try {
       const userId = getUserId();
-      if (userId) {
+      const token = getToken();
+      if (userId && token) {
         if (!inCart) {
-          await api.post(`/api/cart/add`, { userId, productId: id });
+          await api.post(
+            `/api/cart/add`,
+            { userId, productId: id },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
           setInCart(true);
           alert("Added to Cart");
         } else {
@@ -124,8 +151,13 @@ const ProductDetails = () => {
   const handleRemoveFromCart = async () => {
     try {
       const userId = getUserId();
-      if (userId) {
-        await api.post(`/api/cart/remove`, { userId, productId: id });
+      const token = getToken();
+      if (userId && token) {
+        await api.post(
+          `/api/cart/remove`,
+          { userId, productId: id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setInCart(false);
         alert("Removed from Cart");
       } else {
