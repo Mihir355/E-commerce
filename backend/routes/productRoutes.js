@@ -12,11 +12,15 @@ router.get("/:subcategory", async (req, res) => {
     const cacheKey = `subcategory:${subcategory}`;
 
     const cached = cache.get(cacheKey);
-    if (cached) return res.json(cached);
-
-    const products = await Product.find({ subcategory });
-    cache.set(cacheKey, products);
-    res.json(products);
+    if (cached) {
+      console.log("fetch from catch");
+      return res.json(cached);
+    } else {
+      console.log("not cached");
+      const products = await Product.find({ subcategory });
+      cache.set(cacheKey, products);
+      res.json(products);
+    }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
