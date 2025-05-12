@@ -77,7 +77,8 @@ const ProductDetails = () => {
           alert("Item is already in Wishlist");
         }
       } else {
-        console.log("User not logged in");
+        alert("Please log in to add items to your wishlist.");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error adding to wishlist:", err);
@@ -92,7 +93,8 @@ const ProductDetails = () => {
         setInWishlist(false);
         alert("Removed from Wishlist");
       } else {
-        console.log("User not logged in");
+        alert("Please log in to remove items from your wishlist.");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error removing from wishlist:", err);
@@ -111,7 +113,8 @@ const ProductDetails = () => {
           alert("Item is already in Cart");
         }
       } else {
-        console.log("User not logged in");
+        alert("Please log in to add items to your cart.");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -126,7 +129,8 @@ const ProductDetails = () => {
         setInCart(false);
         alert("Removed from Cart");
       } else {
-        console.log("User not logged in");
+        alert("Please log in to remove items from your cart.");
+        navigate("/");
       }
     } catch (err) {
       console.error("Error removing from cart:", err);
