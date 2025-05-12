@@ -20,6 +20,11 @@ const Profile = () => {
 
   const token = localStorage.getItem("token");
 
+  const handleUnauthorized = () => {
+    alert("Unauthorized access. Please log in.");
+    navigate("/");
+  };
+
   const fetchOrders = async (userId, currentPage = 1) => {
     try {
       const response = await api.get(
@@ -33,7 +38,11 @@ const Profile = () => {
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
     } catch (err) {
-      console.error("Error fetching orders:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error fetching orders:", err);
+      }
     }
   };
 
@@ -41,7 +50,7 @@ const Profile = () => {
     const storedUserId = localStorage.getItem("userId");
 
     if (!storedUserId || !token) {
-      navigate("/"); // redirect to login if not authenticated
+      handleUnauthorized();
       return;
     }
 
@@ -62,8 +71,11 @@ const Profile = () => {
           console.error("User not found");
         }
       } catch (err) {
-        console.error("Error fetching user details:", err);
-        navigate("/"); // redirect if token is invalid or expired
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          handleUnauthorized();
+        } else {
+          console.error("Error fetching user details:", err);
+        }
       }
     };
 
@@ -74,7 +86,11 @@ const Profile = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem("userId");
-    if (!userId || !token) return alert("User not logged in");
+    if (!userId || !token) {
+      alert("User not logged in");
+      navigate("/");
+      return;
+    }
 
     try {
       const response = await api.put(
@@ -98,8 +114,12 @@ const Profile = () => {
         alert("Failed to update profile: " + response.data.message);
       }
     } catch (error) {
-      console.error("Error updating user:", error);
-      alert("Error updating profile: " + error.message);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error updating user:", error);
+        alert("Error updating profile: " + error.message);
+      }
     }
   };
 

@@ -18,13 +18,18 @@ const Wishlist = () => {
   const getToken = () => localStorage.getItem("token");
   const getUserId = () => localStorage.getItem("userId");
 
+  const handleUnauthorized = () => {
+    alert("Unauthorized access. Please log in.");
+    navigate("/");
+  };
+
   const fetchWishlist = async (page = 1) => {
     setLoading(true);
     try {
       const token = getToken();
       const userId = getUserId();
       if (!token || !userId) {
-        navigate("/");
+        handleUnauthorized();
         return;
       }
 
@@ -36,8 +41,8 @@ const Wishlist = () => {
       setTotalItems(response.data.total);
     } catch (err) {
       console.error("Error fetching wishlist:", err);
-      if (err.response?.status === 401) {
-        navigate("/");
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
       }
     } finally {
       setLoading(false);
@@ -52,6 +57,10 @@ const Wishlist = () => {
     try {
       const token = getToken();
       const userId = getUserId();
+      if (!token || !userId) {
+        handleUnauthorized();
+        return;
+      }
       await api.post(
         `/api/wishlist/remove`,
         { userId, productId },
@@ -59,7 +68,11 @@ const Wishlist = () => {
       );
       fetchWishlist(currentPage);
     } catch (err) {
-      console.error("Error removing from wishlist:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error removing from wishlist:", err);
+      }
     }
   };
 
@@ -67,6 +80,10 @@ const Wishlist = () => {
     try {
       const token = getToken();
       const userId = getUserId();
+      if (!token || !userId) {
+        handleUnauthorized();
+        return;
+      }
       await api.post(
         `/api/cart/add`,
         { userId, productId },
@@ -75,7 +92,11 @@ const Wishlist = () => {
       await handleRemoveFromWishlist(productId);
       alert("Item moved to cart!");
     } catch (err) {
-      console.error("Error adding to cart and removing from wishlist:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error adding to cart and removing from wishlist:", err);
+      }
     }
   };
 

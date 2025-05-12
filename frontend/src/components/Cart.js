@@ -17,6 +17,11 @@ const Cart = () => {
   const getToken = () => localStorage.getItem("token");
   const getUserId = () => localStorage.getItem("userId");
 
+  const handleUnauthorized = () => {
+    alert("Unauthorized access. Please log in.");
+    navigate("/");
+  };
+
   const fetchCart = async (currentPage = 1) => {
     setLoading(true);
     try {
@@ -30,11 +35,11 @@ const Cart = () => {
         setCartItems(response.data.products);
         setTotalPages(response.data.totalPages);
       } else {
-        navigate("/");
+        handleUnauthorized();
       }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        navigate("/");
+        handleUnauthorized();
       } else {
         console.error("Error fetching cart:", err);
       }
@@ -58,9 +63,15 @@ const Cart = () => {
         );
         fetchCart(page);
         alert("Item removed from cart!");
+      } else {
+        handleUnauthorized();
       }
     } catch (err) {
-      console.error("Error removing from cart:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error removing from cart:", err);
+      }
     }
   };
 
@@ -87,7 +98,11 @@ const Cart = () => {
         alert("Cart is empty or user not logged in.");
       }
     } catch (err) {
-      console.error("Error processing the order:", err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        handleUnauthorized();
+      } else {
+        console.error("Error processing the order:", err);
+      }
     }
   };
 
