@@ -8,7 +8,7 @@ const cache = new NodeCache({ stdTTL: 600 }); // Cache expires in 10 minutes
 // 🟩 Get products by subcategory (with caching)
 router.get("/:subcategory", async (req, res) => {
   try {
-    const { subcategory } = req.params;
+    const subcategory = req.params.subcategory.trim();
     const cacheKey = `subcategory:${subcategory}`;
 
     const cached = cache.get(cacheKey);
